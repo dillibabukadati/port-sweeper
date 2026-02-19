@@ -46,27 +46,65 @@ jobs:
       - name: Build release
         run: cargo build --release --target ${{ matrix.target }}
 
-      - name: Prepare artifacts (Unix)
-        if: matrix.os != 'windows-latest'
+      - name: Prepare Linux .deb
+        if: matrix.os == 'ubuntu-latest'
         run: |
-          mkdir -p artifact
-          cp target/${{ matrix.target }}/release/psweep artifact/
-          cp target/${{ matrix.target }}/release/port-sweeper artifact/
-          cd artifact && zip -r ../${{ matrix.artifact_name }}.zip . && cd ..
+          mkdir -p target/release
+          cp target/${{ matrix.target }}/release/psweep target/release/
+          cp target/${{ matrix.target }}/release/port-sweeper target/release/
+          cargo install cargo-deb
+          cargo deb --no-build
+          cp target/debian/psweep_*.deb ${{ matrix.artifact_name }}.deb
 
-      - name: Prepare artifacts (Windows)
+      - name: Prepare Windows .exe installer
         if: matrix.os == 'windows-latest'
         run: |
-          mkdir artifact
-          cp target/${{ matrix.target }}/release/psweep.exe artifact/
-          cp target/${{ matrix.target }}/release/port-sweeper.exe artifact/
-          Compress-Archive -Path artifact\* -DestinationPath ${{ matrix.artifact_name }}.zip
+          mkdir dist
+          copy target\${{ matrix.target }}\release\psweep.exe dist\
+          copy target\${{ matrix.target }}\release\port-sweeper.exe dist\
+          copy scripts\port-sweeper.iss dist\
+        shell: pwsh
 
-      - name: Upload artifact
+      - name: Build Windows installer (Inno Setup)
+        if: matrix.os == 'windows-latest'
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: dist/port-sweeper.iss
+          options: /O+ /DOutputDir=${{ github.workspace }}
+
+      - name: Name Windows installer artifact
+        if: matrix.os == 'windows-latest'
+        run: |
+          $exe = Get-ChildItem -Recurse -Filter "Port-Sweeper-Setup-x86_64.exe" | Select-Object -First 1
+          if ($exe) { Move-Item $exe.FullName "${{ matrix.artifact_name }}.exe" -Force }
+        shell: pwsh
+
+      - name: Prepare macOS app bundle and DMG
+        if: matrix.os == 'macos-latest'
+        run: |
+          chmod +x .github/scripts/create-macos-dmg.sh
+          ./.github/scripts/create-macos-dmg.sh "${{ matrix.artifact_name }}" "${{ matrix.target }}"
+
+      - name: Upload artifact (Linux .deb)
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: ${{ matrix.artifact_name }}.zip
+          path: ${{ matrix.artifact_name }}.deb
+
+      - name: Upload artifact (Windows .exe)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_name }}.exe
+
+      - name: Upload artifact (macOS .dmg)
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_name }}.dmg
 
   release:
     needs: build
@@ -83,7 +121,10 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/**/*.zip
+          files: |
+            artifacts/**/*.deb
+            artifacts/**/*.exe
+            artifacts/**/*.dmg
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

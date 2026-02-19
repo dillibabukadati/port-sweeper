@@ -1,11 +1,20 @@
 [package]
 name = "psweep"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 description = "Lightning-fast CLI and GUI to find and kill processes by port"
 license = "MIT"
 authors = ["Dilli Babu Kadati"]
 repository = "https://github.com/dillibabukadati/port-sweeper"
+
+[package.metadata.deb]
+maintainer = "Dilli Babu Kadati"
+copyright = "2026, Dilli Babu Kadati"
+license-file = ["LICENSE"]
+assets = [
+  ["target/release/psweep", "/usr/bin/psweep", "755"],
+  ["target/release/port-sweeper", "/usr/bin/port-sweeper", "755"],
+]
 
 [[bin]]
 name = "psweep"

@@ -20,8 +20,10 @@ Install
     cargo install --path .
     # Puts psweep and port-sweeper on your PATH
 
-  From releases:
-    Download the zip for your platform from the latest GitHub release and extract psweep (and port-sweeper if you want the GUI).
+  From releases (one install gives you both GUI and CLI on all platforms):
+    macOS: Download the .dmg for your chip (Intel or Apple Silicon). Open it and double‑click "Install Port Sweeper" — installs the app and configures psweep/port-sweeper for the terminal.
+    Windows: Download the .exe installer. Run it and keep "Add to PATH" checked — installs the app and configures psweep/port-sweeper for the terminal.
+    Linux: Download the .deb, then: sudo dpkg -i psweep_*_amd64.deb — installs both and adds them to your PATH.
 
 Usage
 
