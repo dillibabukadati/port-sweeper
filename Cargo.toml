@@ -1,0 +1,24 @@
+[package]
+name = "psweep"
+version = "0.1.0"
+edition = "2021"
+description = "Lightning-fast CLI and GUI to find and kill processes by port"
+license = "MIT"
+repository = "https://github.com/yourusername/port-sweeper"
+
+[[bin]]
+name = "psweep"
+path = "src/main.rs"
+
+[[bin]]
+name = "psweep-gui"
+path = "src/bin/psweep-gui.rs"
+
+[dependencies]
+listeners = "0.4"
+sysinfo = "0.32"
+clap = { version = "4.4", features = ["derive"] }
+anyhow = "1.0"
+eframe = "0.29"
+egui = "0.29"
+egui_extras = { version = "0.29", features = ["all_loaders"] }
