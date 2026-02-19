@@ -2,13 +2,12 @@
 //! Styled to match the HTML reference: radial background, window gradient, cards, and buttons.
 
 use std::sync::Arc;
-use eframe::egui::{self, pos2, Color32, Frame, Margin, Rect, RichText, Rounding, Stroke, Vec2, Visuals};
+use eframe::egui::{self, Color32, Frame, Margin, RichText, Rounding, Stroke, Vec2, Visuals};
 use eframe::egui::viewport::IconData;
 use egui_extras::{Column, TableBuilder};
 use crate::{kill_ports, list_ports, parse_port_spec, PortEntry};
 
-// HTML: body radial gradient #24305a → #0a0f1f
-const BG_TOP: Color32 = Color32::from_rgb(36, 48, 90);   // #24305a
+// HTML: body background
 const BG_BOTTOM: Color32 = Color32::from_rgb(10, 15, 31); // #0a0f1f
 
 // HTML: .window linear-gradient(180deg,#1b223b,#12172b), border rgba(255,255,255,.06)
@@ -40,14 +39,6 @@ const REFRESH_TEXT: Color32 = Color32::from_rgb(219, 225, 255);
 
 // HTML: input background #0f142a
 const INPUT_BG: Color32 = Color32::from_rgb(15, 20, 42);
-
-/// Linear interpolation between two colors (t: 0 = top, 1 = bottom).
-fn lerp_color(top: Color32, bottom: Color32, t: f32) -> Color32 {
-    let r = (1.0 - t) * top.r() as f32 + t * bottom.r() as f32;
-    let g = (1.0 - t) * top.g() as f32 + t * bottom.g() as f32;
-    let b = (1.0 - t) * top.b() as f32 + t * bottom.b() as f32;
-    Color32::from_rgb(r.round() as u8, g.round() as u8, b.round() as u8)
-}
 
 fn card_frame() -> Frame {
     Frame {
@@ -203,21 +194,8 @@ impl eframe::App for PortSweeperApp {
         }
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            // Smooth vertical gradient over full screen (top → bottom)
             let viewport = ui.ctx().screen_rect();
-            const GRADIENT_STRIPS: u32 = 128;
-            let strip_h = viewport.height() / GRADIENT_STRIPS as f32;
-            for i in 0..GRADIENT_STRIPS {
-                let t = (i as f32 + 0.5) / GRADIENT_STRIPS as f32;
-                let y_min = viewport.min.y + i as f32 * strip_h;
-                let y_max = y_min + strip_h;
-                let strip_rect = Rect::from_min_max(
-                    pos2(viewport.min.x, y_min),
-                    pos2(viewport.max.x, y_max),
-                );
-                let color = lerp_color(BG_TOP, BG_BOTTOM, t);
-                ui.painter().rect_filled(strip_rect, 0.0, color);
-            }
+            ui.painter().rect_filled(viewport, 0.0, BG_BOTTOM);
 
             // HTML: .window padding 22px 24px 26px, border-radius 14px
             let outer = Frame {
@@ -241,12 +219,19 @@ impl eframe::App for PortSweeperApp {
 
                 // ── Table (HTML .table): grid 80px 1fr 90px 110px 110px, header 13px #8c94c8 ─────
                 let mut kill_port: Option<u16> = None;
+                // Reserve space for Refresh button, Kill a Port card, status, and padding
+                const RESERVED_BELOW_TABLE: f32 = 260.0;
+                const MIN_TABLE_HEIGHT: f32 = 120.0;
+                let available_height = ui.available_rect_before_wrap().height();
+                let table_max_height = (available_height - RESERVED_BELOW_TABLE).max(MIN_TABLE_HEIGHT);
                 card_frame().show(ui, |ui| {
                     let table = TableBuilder::new(ui)
                         .striped(false)
                         .resizable(false)
                         .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
                         .min_scrolled_height(0.0)
+                        .max_scroll_height(table_max_height)
+                        .scroll_bar_visibility(egui::containers::scroll_area::ScrollBarVisibility::AlwaysVisible)
                         .column(Column::exact(80.0))
                         .column(Column::remainder().at_least(120.0))
                         .column(Column::exact(90.0))
