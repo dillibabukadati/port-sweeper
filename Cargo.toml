@@ -1,6 +1,6 @@
 [package]
 name = "psweep"
-version = "1.0.2"
+version = "1.0.3"
 edition = "2021"
 description = "Lightning-fast CLI and GUI to find and kill processes by port"
 license = "MIT"

@@ -1,6 +1,6 @@
 ; Port Sweeper Windows installer - installs GUI and CLI and adds to PATH
 #define MyAppName "Port Sweeper"
-#define MyAppVersion "1.0.2"
+#define MyAppVersion "1.0.3"
 #define MyAppPublisher "Dilli Babu Kadati"
 #define MyAppURL "https://github.com/dillibabukadati/port-sweeper"
 
@@ -37,7 +37,7 @@ Source: "port-sweeper.exe"; DestDir: "{app}"; Flags: ignoreversion
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}"; Tasks: envpath; Check: EnvPathNeedsAdd
 
 [Code]
-function EnvPathNeedsAdd(Param: String): Boolean;
+function EnvPathNeedsAdd(): Boolean;
 var
   Paths: String;
   AppDir: String;
