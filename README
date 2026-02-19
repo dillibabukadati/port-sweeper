@@ -2,14 +2,16 @@ Port Sweeper (psweep)
 
 Find and kill processes by port. A lightning-fast CLI and GUI for when you see "Port 3000 is already in use".
 
+By Dilli Babu Kadati — https://github.com/dillibabukadati/port-sweeper
+
 Install
 
   From source (requires Rust):
     cargo install --path .
-    # Puts psweep and psweep-gui on your PATH
+    # Puts psweep and port-sweeper on your PATH
 
   From releases:
-    Download the zip for your platform from the latest GitHub release and extract psweep (and psweep-gui if you want the GUI).
+    Download the zip for your platform from the latest GitHub release and extract psweep (and port-sweeper if you want the GUI).
 
 Usage
 
@@ -25,14 +27,14 @@ Usage
   Open the GUI:
     psweep gui
     # Or run the standalone GUI binary:
-    psweep-gui
+    port-sweeper
 
 Building
 
   Prerequisites: Rust (rustup recommended).
 
   cargo build --release
-  # Binaries: target/release/psweep, target/release/psweep-gui (or .exe on Windows)
+  # Binaries: target/release/psweep, target/release/port-sweeper (or .exe on Windows)
 
   Cross-compile for another target:
     rustup target add <target>

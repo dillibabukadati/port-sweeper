@@ -1,7 +1,9 @@
 //! Port Sweeper GUI using eframe/egui.
 //! Styled to match the HTML reference: radial background, window gradient, cards, and buttons.
 
+use std::sync::Arc;
 use eframe::egui::{self, pos2, Color32, Frame, Margin, Rect, RichText, Rounding, Stroke, Vec2, Visuals};
+use eframe::egui::viewport::IconData;
 use egui_extras::{Column, TableBuilder};
 use crate::{kill_ports, list_ports, parse_port_spec, PortEntry};
 
@@ -58,11 +60,40 @@ fn card_frame() -> Frame {
     }
 }
 
+/// Load app icon from embedded logo (square, RGBA). Used for taskbar/dock/window chrome.
+fn load_icon() -> Option<IconData> {
+    let bytes = include_bytes!("../assets/logo.png");
+    let img = image::load_from_memory(bytes).ok()?.to_rgba8();
+    let (w, h) = (img.width(), img.height());
+    if w == 0 || h == 0 {
+        return None;
+    }
+    // Some platforms expect dimensions that are multiples of 4; use 256 for a standard icon size.
+    let size = 256.min(w).min(h);
+    let size = (size / 4) * 4;
+    let size = size.max(4);
+    let scaled = image::imageops::resize(
+        &img,
+        size,
+        size,
+        image::imageops::FilterType::Lanczos3,
+    );
+    Some(IconData {
+        rgba: scaled.into_raw(),
+        width: size,
+        height: size,
+    })
+}
+
 pub fn run() -> anyhow::Result<()> {
+    let mut viewport = egui::ViewportBuilder::default()
+        .with_inner_size([720.0, 600.0])
+        .with_min_inner_size([520.0, 420.0]);
+    if let Some(icon) = load_icon() {
+        viewport = viewport.with_icon(Arc::new(icon));
+    }
     let options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default()
-            .with_inner_size([720.0, 600.0])
-            .with_min_inner_size([520.0, 420.0]),
+        viewport,
         ..Default::default()
     };
     eframe::run_native(
