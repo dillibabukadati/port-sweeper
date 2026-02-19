@@ -128,3 +128,6 @@ pub fn kill_ports(ports: &[u16]) -> Vec<KillResult> {
 }
 
 pub mod gui;
+
+#[cfg(target_os = "macos")]
+pub mod installer_macos;

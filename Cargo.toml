@@ -1,6 +1,6 @@
 [package]
 name = "psweep"
-version = "1.0.3"
+version = "1.0.4"
 edition = "2021"
 description = "Lightning-fast CLI and GUI to find and kill processes by port"
 license = "MIT"
@@ -13,16 +13,11 @@ copyright = "2026, Dilli Babu Kadati"
 license-file = ["LICENSE"]
 assets = [
   ["target/release/psweep", "/usr/bin/psweep", "755"],
-  ["target/release/port-sweeper", "/usr/bin/port-sweeper", "755"],
 ]
 
 [[bin]]
 name = "psweep"
 path = "src/main.rs"
-
-[[bin]]
-name = "port-sweeper"
-path = "src/bin/port-sweeper.rs"
 
 [dependencies]
 listeners = "0.4"

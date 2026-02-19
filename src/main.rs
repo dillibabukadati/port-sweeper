@@ -8,8 +8,9 @@ use std::process::ExitCode;
 #[command(name = "psweep")]
 #[command(about = "Find and kill processes by port", long_about = None)]
 struct Cli {
+    /// Subcommand; omit to open the GUI (e.g. when launched from the app)
     #[command(subcommand)]
-    command: Commands,
+    command: Option<Commands>,
 }
 
 #[derive(Subcommand)]
@@ -37,9 +38,17 @@ fn main() -> ExitCode {
 
 fn run(cli: Cli) -> anyhow::Result<()> {
     match cli.command {
-        Commands::List => run_list(),
-        Commands::Kill { ports } => run_kill(&ports),
-        Commands::Gui => run_gui(),
+        None => {
+            // No subcommand = GUI (e.g. double-click from DMG). On macOS, if not yet in /Applications, install then launch.
+            #[cfg(target_os = "macos")]
+            if !psweep::installer_macos::is_installed() {
+                return psweep::installer_macos::install_then_launch();
+            }
+            run_gui()
+        }
+        Some(Commands::List) => run_list(),
+        Some(Commands::Kill { ports }) => run_kill(&ports),
+        Some(Commands::Gui) => run_gui(),
     }
 }
 

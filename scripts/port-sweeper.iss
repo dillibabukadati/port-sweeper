@@ -1,6 +1,6 @@
 ; Port Sweeper Windows installer - installs GUI and CLI and adds to PATH
 #define MyAppName "Port Sweeper"
-#define MyAppVersion "1.0.3"
+#define MyAppVersion "1.0.4"
 #define MyAppPublisher "Dilli Babu Kadati"
 #define MyAppURL "https://github.com/dillibabukadati/port-sweeper"
 
@@ -30,7 +30,6 @@ Name: "envpath"; Description: "Add Port Sweeper to PATH (recommended)"; GroupDes
 
 [Files]
 Source: "psweep.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "port-sweeper.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Registry]
 ; Add install dir to system PATH when "Add to PATH" task is selected

@@ -1,5 +1,7 @@
 # Build output
 /target/
+*.dmg
+/dmg/
 
 # Cargo lock (optional: remove this line if you want to commit Cargo.lock for applications)
 # Cargo.lock

@@ -1,6 +1,8 @@
 # Port Sweeper (psweep)
 
-Find and kill processes by port. A lightning-fast CLI and GUI for when you see *"Port 3000 is already in use"*.
+Find and kill processes by port. A lightning-fast GUI for when you see *"Port 3000 is already in use"*.
+
+*This release focuses on the GUI; CLI docs are commented below for a future release.*
 
 **By [Dilli Babu Kadati](https://github.com/dillibabukadati/port-sweeper)**
 
@@ -20,48 +22,33 @@ Find and kill processes by port. A lightning-fast CLI and GUI for when you see *
 
 ## Install
 
-### From source (requires Rust)
+### From releases (this release: GUI app only)
 
+- **macOS:** Download the `.dmg` for your chip (Intel or Apple Silicon). Open it and double‑click **Port Sweeper** — installs the app to Applications (you’ll be asked for your password once).
+- **Windows:** Download the `.exe` installer and run it.
+- **Linux:** Download the `.deb`, then: `sudo dpkg -i psweep_*_amd64.deb`.
+
+<!-- CLI install (uncomment for a future release):
+### From source (requires Rust)
 ```bash
 cargo install --path .
 # Puts psweep and port-sweeper on your PATH
 ```
-
-### From releases (one install gives you both GUI and CLI on all platforms)
-
-- **macOS:** Download the `.dmg` for your chip (Intel or Apple Silicon). Open it and double‑click "Install Port Sweeper" — installs the app and configures `psweep`/`port-sweeper` for the terminal.
-- **Windows:** Download the `.exe` installer. Run it and keep "Add to PATH" checked — installs the app and configures `psweep`/`port-sweeper` for the terminal.
-- **Linux:** Download the `.deb`, then: `sudo dpkg -i psweep_*_amd64.deb` — installs both and adds them to your PATH.
+macOS: "configures psweep/port-sweeper for the terminal" | Windows: keep "Add to PATH" checked | Linux: adds to PATH
+-->
 
 ---
 
 ## Usage
 
-**List active ports:**
+**Open Port Sweeper** from Applications (macOS/Windows) or your app menu — use the GUI to list ports and kill processes on a port.
 
-```bash
-psweep list
-```
-
-**Kill process on a port:**
-
-```bash
-psweep kill 3000
-```
-
-**Kill multiple ports (comma-separated or range):**
-
-```bash
-psweep kill 3000,8000,9000-9010
-```
-
-**Open the GUI:**
-
-```bash
-psweep gui
-# Or run the standalone GUI binary:
-port-sweeper
-```
+<!-- CLI usage (uncomment for a future release):
+**List active ports:** `psweep list`
+**Kill process on a port:** `psweep kill 3000`
+**Kill multiple (comma or range):** `psweep kill 3000,8000,9000-9010`
+**Open the GUI:** `psweep gui` or `port-sweeper`
+-->
 
 ---
 
